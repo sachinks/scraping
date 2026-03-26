@@ -209,3 +209,7 @@ __marimo__/
 # Pycharm
 
 .idea/
+
+# JSON
+
+*.json
