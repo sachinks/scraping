@@ -1,6 +1,6 @@
 import os
-from logging_config import setup_logging
-from scraper import QuoteScraper
+from utils.logger import setup_logging
+from scraper.scraper import QuoteScraper
 
 
 def main():
