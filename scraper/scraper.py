@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import List, Dict
-from playwright.sync_api import sync_playwright, TimeoutError
+from playwright.sync_api import sync_playwright
 
 from utils.retry import retry
 from utils.timeit import timeit
@@ -110,9 +110,6 @@ class QuoteScraper:
                     break
 
                 next_btn.click()
-
-        except TimeoutError:
-            self.logger.exception("Timeout during scraping")
 
         except Exception:
             self.logger.exception("Scrape failed")
