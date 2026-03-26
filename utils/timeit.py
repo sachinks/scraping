@@ -14,6 +14,6 @@ def timeit(func):
 
         finally:
             duration = round(time.time() - start_time, 2)
-            self.logger.info(f"{func.__name__} took {duration} seconds")
+            self.logger.debug(f"{func.__name__} took {duration} seconds")
 
     return wrapper
