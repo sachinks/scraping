@@ -1,5 +1,4 @@
 import time
-import logging
 from playwright.sync_api import TimeoutError
 
 
