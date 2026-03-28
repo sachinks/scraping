@@ -1,6 +1,6 @@
+import logging
 import os
 import sys
-import logging
 from utils.logger import setup_logging
 from scraper.scraper import QuoteScraper
 from scraper.exceptions import (

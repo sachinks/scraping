@@ -1,6 +1,8 @@
 import json
 import logging
+import time
 from typing import List, Dict
+
 from playwright.sync_api import sync_playwright
 
 from utils.retry import retry
@@ -179,6 +181,8 @@ class QuoteScraper:
         """
         self.logger.info("Run started")
 
+        start = time.perf_counter()
+
         try:
             self.setup()
             self.scrape()
@@ -187,3 +191,4 @@ class QuoteScraper:
         finally:
             self.cleanup()
             self.logger.info("Run finished")
+            self.logger.debug(f"Total run time: {time.perf_counter() - start:.2f}s")
