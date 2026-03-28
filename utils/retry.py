@@ -1,11 +1,11 @@
 import time
-from playwright.sync_api import TimeoutError
+from scraper.exceptions import ScraperNavigationError
 
 
 def retry(func):
     """
     Retry decorator for handling transient failures.
-    Retries only TimeoutError.
+    Retries only ScraperNavigationError.
     """
 
     def wrapper(self, *args, **kwargs):
@@ -16,9 +16,9 @@ def retry(func):
                 )
                 return func(self, *args, **kwargs)
 
-            except TimeoutError as e:
+            except ScraperNavigationError as e:
                 self.logger.warning(
-                    f"{func.__name__} timeout on attempt {attempt}: {e}"
+                    f"{func.__name__} navigation error on attempt {attempt}: {e}"
                 )
 
                 if attempt == self.retries:

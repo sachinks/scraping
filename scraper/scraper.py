@@ -5,6 +5,13 @@ from playwright.sync_api import sync_playwright
 
 from utils.retry import retry
 from utils.timeit import timeit
+from scraper.exceptions import (
+    ScraperSetupError,
+    ScraperNavigationError,
+    ScraperPageError,
+    ScraperExtractionError,
+    ScraperSaveError,
+)
 
 
 class QuoteScraper:
@@ -42,9 +49,9 @@ class QuoteScraper:
 
             self.logger.info("Browser launched successfully")
 
-        except Exception:
+        except Exception as e:
             self.logger.exception("Setup failed")
-            raise
+            raise ScraperSetupError("Browser failed to initialise") from e
 
         finally:
             self.logger.debug("Exiting setup()")
@@ -64,9 +71,9 @@ class QuoteScraper:
 
             self.logger.info("Page loaded successfully")
 
-        except Exception:
+        except Exception as e:
             self.logger.exception("Navigation failed")
-            raise
+            raise ScraperNavigationError(f"Failed to load {self.base_url}") from e
 
         finally:
             self.logger.debug("Exiting navigate()")
@@ -98,10 +105,14 @@ class QuoteScraper:
                             "author": author
                         })
 
-                    except Exception:
-                        self.logger.error(
-                            f"Item extraction failed at index {i}"
+                    except Exception as e:
+                        error = ScraperExtractionError(
+                            f"Could not extract quote at index {i}"
                         )
+                        self.logger.warning(
+                            "Skipping item: %s", error, exc_info=e
+                        )
+                        # Not re-raised — item is skipped, loop continues
 
                 next_btn = self.page.locator(".next a")
 
@@ -111,9 +122,12 @@ class QuoteScraper:
 
                 next_btn.click()
 
-        except Exception:
+        except ScraperNavigationError:
+            raise  # already the right type, don't rewrap
+
+        except Exception as e:
             self.logger.exception("Scrape failed")
-            raise
+            raise ScraperPageError("Page-level scrape operation failed") from e
 
         finally:
             self.logger.debug("Exiting scrape()")
@@ -131,9 +145,9 @@ class QuoteScraper:
 
             self.logger.info(f"Saved {len(self.data)} records")
 
-        except Exception:
+        except Exception as e:
             self.logger.exception("Save failed")
-            raise
+            raise ScraperSaveError("Failed to write data to disk") from e
 
         finally:
             self.logger.debug("Exiting save()")
@@ -169,9 +183,6 @@ class QuoteScraper:
             self.setup()
             self.scrape()
             self.save()
-
-        except Exception:
-            self.logger.exception("Run failed")
 
         finally:
             self.cleanup()
