@@ -69,7 +69,7 @@ class QuoteScraper:
         try:
             self.logger.info(f"Navigating to {self.base_url}")
 
-            self.page.goto(self.base_url, timeout=60000)
+            self.page.goto(self.base_url, timeout=6000)
 
             self.logger.info("Page loaded successfully")
 
