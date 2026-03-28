@@ -16,6 +16,7 @@ It includes robust features like retry logic, structured logging, and clean arch
 * 🌐 Configurable target URL (no hardcoding)
 * 📁 Clean JSON output
 * ⚙️ Ready for scaling and real-world projects
+* 🚨 Custom exception hierarchy for precise error handling
 
 ---
 
@@ -34,15 +35,19 @@ It includes robust features like retry logic, structured logging, and clean arch
 project/
 │
 ├── scraper/
-│   └── scraper.py        # Core scraping logic
+│   ├── scraper.py        # Core scraping logic
+│   ├── exceptions.py     # Custom exception hierarchy
+│   └── __init__.py
 │
-├── utils/                # (Planned reusable utilities)
-│   ├── retry.py
-│   ├── logger.py
-│   └── timeit.py
+├── utils/
+│   ├── retry.py          # Retry decorator
+│   ├── logger.py         # Logging setup
+│   ├── timeit.py         # Execution time decorator
+│   └── __init__.py
 │
 ├── main.py               # Entry point
 ├── requirements.txt
+├── .gitattributes
 └── README.md
 ```
 
@@ -101,7 +106,7 @@ scraper = QuoteScraper(base_url=url)
 
 ## 🔁 Retry Logic
 
-* Retries only on `TimeoutError`
+* Retries only on `ScraperNavigationError` (transient network failures)
 * Configurable retry count and delay
 * Exponential backoff supported
 
